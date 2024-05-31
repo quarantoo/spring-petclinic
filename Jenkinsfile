@@ -1,32 +1,30 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.1-openjdk-11'
-            args '-v /root/.m2:/root/.m2'
-        }
+    agent any
+
+    environment {
+        MAVEN_HOME = 'C:\\Program Files\\Maven\\apache-maven-3.9.6'
+        PATH = "${env.MAVEN_HOME}\\bin;${env.PATH}"
     }
+
     stages {
-        stage('Checkout') {
+        stage('Clone repo') {
             steps {
-                checkout scm
+                git branch: 'main', credentialsId: '36224503-e5e8-4944-9e28-f2fdf613435a', url: 'https://github.com/quarantoo/spring-petclinic.git'
             }
         }
-
         stage('Build') {
             steps {
-                sh 'mvn clean install'
+                bat 'mvn clean install'
             }
         }
-
         stage('Test') {
             steps {
-                sh 'mvn test'
+                bat 'mvn test'
             }
         }
-
         stage('Package') {
             steps {
-                sh 'mvn package'
+                bat 'mvn package'
             }
         }
     }
